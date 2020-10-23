@@ -1,13 +1,16 @@
 package com.pm.ecommerce.account_service.services;
 
+import com.pm.ecommerce.account_service.Models.UserRequest;
+import com.pm.ecommerce.account_service.Models.UserResponse;
 import com.pm.ecommerce.account_service.repositories.UserRepository;
-
 import com.pm.ecommerce.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -15,7 +18,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(User user) throws Exception {
+    //get all users
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream().map(e -> new UserResponse(e)).collect(Collectors.toList());
+    }
+
+    //create a new user
+    public UserResponse createUser(UserRequest user) throws Exception {
         if (user == null) {
             throw new Exception("Data expected with this request");
         }
@@ -24,7 +33,7 @@ public class UserService {
             throw new Exception("Email field is empty");
         }
 
-        if(!validateEmail(user.getEmail())){
+        if (!validateEmail(user.getEmail())) {
             throw new Exception("Please provide a valid email");
         }
 
@@ -37,7 +46,10 @@ public class UserService {
             throw new Exception("Email is already registered");
         }
 
-        return userRepository.save(user);
+        User user2 = user.toUser();
+        userRepository.save(user2);
+
+        return new UserResponse(user2);
     }
 
     public boolean validateEmail(String emailStr) {
@@ -46,10 +58,18 @@ public class UserService {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
         return matcher.find();
     }
-
+   // get user by Email
     public User getByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    //get user by Id
+    public User getById(int id) {
+        return userRepository.findById(id).get();
+    }
+
+    public UserResponse getUserById(int id) {
+        return new UserResponse(getById(id));
+    }
 
 }
