@@ -1,4 +1,4 @@
-package com.pm.ecommerce.account_service.Models;
+package com.pm.ecommerce.account_service.models;
 
 import com.pm.ecommerce.entities.User;
 import lombok.Data;

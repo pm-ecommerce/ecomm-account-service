@@ -1,8 +1,11 @@
 package com.pm.ecommerce.account_service.services;
 
-import com.pm.ecommerce.account_service.Models.VendorRequest;
-import com.pm.ecommerce.account_service.Models.VendorResponse;
+import com.pm.ecommerce.account_service.models.LoginRequest;
+import com.pm.ecommerce.account_service.models.LoginResponse;
+import com.pm.ecommerce.account_service.models.VendorRequest;
+import com.pm.ecommerce.account_service.models.VendorResponse;
 import com.pm.ecommerce.account_service.repositories.VendorRepository;
+import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.Vendor;
 import com.pm.ecommerce.enums.VendorStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,9 @@ public class VendorService {
 
     @Autowired
     private VendorRepository vendorRepository;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     //Register a Vendor
     public VendorResponse createVendor(VendorRequest vendor) throws Exception {
@@ -203,4 +209,27 @@ public class VendorService {
         vendorRepository.save(vendor);
         return new VendorResponse(vendor);
     }
+
+
+    public LoginResponse login(LoginRequest request) throws Exception {
+
+        Vendor vendor1 = getByEmail(request.getEmail());
+        if (!vendor1.getPassword().equals(request.getPassword())) {
+            throw new Exception("Password did not match");
+        }
+
+        if (vendor1.getStatus()!=VendorStatus.APPROVED) {
+            throw new Exception("Your account has not been approved yet");
+        }
+
+
+        final String token = jwtTokenUtil.generateToken(vendor1, "vendor");
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(token);
+        loginResponse.setName(vendor1.getName());
+
+        return loginResponse;
+
+    }
+
 }

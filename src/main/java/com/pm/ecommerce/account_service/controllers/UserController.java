@@ -1,7 +1,9 @@
 package com.pm.ecommerce.account_service.controllers;
 
-import com.pm.ecommerce.account_service.Models.UserRequest;
-import com.pm.ecommerce.account_service.Models.UserResponse;
+import com.pm.ecommerce.account_service.models.LoginRequest;
+import com.pm.ecommerce.account_service.models.LoginResponse;
+import com.pm.ecommerce.account_service.models.UserRequest;
+import com.pm.ecommerce.account_service.models.UserResponse;
 import com.pm.ecommerce.account_service.services.UserService;
 import com.pm.ecommerce.entities.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +87,21 @@ public class UserController {
             UserResponse user1 = userService.deleteUser(id);
             response.setMessage("User Deleted Successfully");
             response.setData(user1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @PostMapping("/login")
+    private ResponseEntity<ApiResponse<LoginResponse>> loginEmployee(@RequestBody LoginRequest loginRequest) {
+        ApiResponse<LoginResponse> response = new ApiResponse<>();
+        try {
+            LoginResponse response1 = userService.login(loginRequest);
+            response.setMessage("User Logged In Successfully. ");
+            response.setData(response1);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setMessage(e.getMessage());

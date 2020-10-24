@@ -1,8 +1,11 @@
 package com.pm.ecommerce.account_service.services;
 
-import com.pm.ecommerce.account_service.Models.UserRequest;
-import com.pm.ecommerce.account_service.Models.UserResponse;
+import com.pm.ecommerce.account_service.models.LoginRequest;
+import com.pm.ecommerce.account_service.models.LoginResponse;
+import com.pm.ecommerce.account_service.models.UserRequest;
+import com.pm.ecommerce.account_service.models.UserResponse;
 import com.pm.ecommerce.account_service.repositories.UserRepository;
+import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     //get all users
     public List<UserResponse> getAllUsers() {
@@ -98,6 +104,23 @@ public class UserService {
                 Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
         return matcher.find();
+    }
+
+    public LoginResponse login(LoginRequest request) throws Exception {
+
+        User user = getByEmail(request.getEmail());
+        System.out.println(user.getPassword());
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new Exception("Password did not match");
+        }
+
+        final String token = jwtTokenUtil.generateToken(user, "employee");
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(token);
+        loginResponse.setName(user.getName());
+
+        return loginResponse;
+
     }
 
     // get user by Email
