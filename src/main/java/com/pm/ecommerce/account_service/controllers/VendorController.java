@@ -96,4 +96,38 @@ public class VendorController {
         }
 
     }
+
+    @PatchMapping("/{id}/approve")
+    public ResponseEntity<ApiResponse<VendorResponse>> approveVendor(@PathVariable int id) {
+        ApiResponse<VendorResponse> response = new ApiResponse<>();
+        try {
+            VendorResponse vendor1 = vendorService.approveVendor(id);
+            response.setMessage("Vendor Approved ");
+            response.setData(vendor1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+    }
+
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<ApiResponse<VendorResponse>> rejectVendor(@PathVariable int id) {
+        ApiResponse<VendorResponse> response = new ApiResponse<>();
+        try {
+            VendorResponse vendor1 = vendorService.rejectVendor(id);
+            response.setMessage("Vendor Rejected ");
+            response.setData(vendor1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+    }
+
+
 }

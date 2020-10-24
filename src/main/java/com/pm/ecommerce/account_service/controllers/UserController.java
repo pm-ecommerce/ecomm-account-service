@@ -63,4 +63,34 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserRequest user, @PathVariable int id) {
+        ApiResponse<UserResponse> response = new ApiResponse<>();
+        try {
+            UserResponse user1 = userService.updateUser(user,id);
+            response.setMessage("User Updated Successfully");
+            response.setData(user1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> deleteUser( @PathVariable int id) {
+        ApiResponse<UserResponse> response = new ApiResponse<>();
+        try {
+            UserResponse user1 = userService.deleteUser(id);
+            response.setMessage("User Deleted Successfully");
+            response.setData(user1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
 }

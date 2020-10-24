@@ -21,6 +21,8 @@ public class VendorResponse {
         setBusinessName(vendor.getBusinessName());
         setEmail(vendor.getEmail());
         setId(vendor.getId());
-        setAddress(vendor.getAddress());
+        if (vendor.getAddress() != null) {
+            setAddress(vendor.getAddress());
+        }
     }
 }

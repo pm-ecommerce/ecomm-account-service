@@ -4,6 +4,7 @@ import com.pm.ecommerce.account_service.Models.VendorRequest;
 import com.pm.ecommerce.account_service.Models.VendorResponse;
 import com.pm.ecommerce.account_service.repositories.VendorRepository;
 import com.pm.ecommerce.entities.Vendor;
+import com.pm.ecommerce.enums.VendorStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -170,6 +171,36 @@ public class VendorService {
             throw new Exception("Vendor doesn't exist");
         }
         vendorRepository.delete(vendor);
+        return new VendorResponse(vendor);
+    }
+
+    //Vendor Approval API
+    public VendorResponse approveVendor(int id) throws Exception {
+        Vendor vendor = getById(id);
+        if(vendor == null){
+            throw  new Exception("Vendor not found");
+        }
+        if(vendor.getStatus() != VendorStatus.PAYMENT_DONE){
+            throw new Exception("Please provide the minimum payment for approval");
+        }
+        vendor.setStatus(VendorStatus.APPROVED);
+        vendorRepository.save(vendor);
+        return new VendorResponse(vendor);
+    }
+
+    //Vendor Reject API
+    public VendorResponse rejectVendor(int id) throws Exception{
+        Vendor vendor = getById(id);
+        if(vendor == null){
+            throw new Exception("Vendor not found");
+        }
+
+        if(vendor.getStatus() != VendorStatus.PAYMENT_DONE){
+            throw  new Exception("Please provide the minimum payment for approval");
+        }
+
+        vendor.setStatus(VendorStatus.UNAPPROVED);
+        vendorRepository.save(vendor);
         return new VendorResponse(vendor);
     }
 }
