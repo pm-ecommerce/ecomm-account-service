@@ -24,8 +24,39 @@ public class VendorService {
             throw new Exception("Data expected with this request");
         }
 
+        if (vendor.getPassword() == null || vendor.getPassword().length() == 0) {
+            throw new Exception("Please provide a password");
+        }
+
+        if (vendor.getPasswordConfirmation() == null || vendor.getPasswordConfirmation().length() == 0) {
+            throw new Exception("Please provide a password");
+        }
+
+        if(!vendor.getPassword().equals(vendor.getPasswordConfirmation())){
+            throw new Exception("Password doesn't match!");
+        }
+
         if (vendor.getEmail() == null || vendor.getEmail().length() == 0) {
             throw new Exception("Please provide your business email");
+        }
+        if (vendor.getAddress1() == null || vendor.getAddress1().length() == 0) {
+            throw new Exception("Please provide your address");
+        }
+
+        if (vendor.getCity() == null || vendor.getCity().length() == 0) {
+            throw new Exception("Please provide your city name");
+        }
+
+        if (vendor.getZipcode() == null || vendor.getZipcode().length() < 5) {
+            throw new Exception("Please provide your ZipCode");
+        }
+
+        if (vendor.getState() == null || vendor.getState().length() != 2) {
+            throw new Exception("Please provide your State ");
+        }
+
+        if (vendor.getCountry() == null || vendor.getCountry().length() == 0) {
+            vendor.setCountry("USA");
         }
 
         if (!validateEmail(vendor.getEmail())) {
@@ -49,6 +80,7 @@ public class VendorService {
         if (vendor1 != null) {
             throw new Exception("Business already registered");
         }
+
 
         Vendor vendor2 = vendor.toVendor();
 
@@ -80,13 +112,13 @@ public class VendorService {
         return vendorRepository.findById(id).get();
     }
 
-    public VendorResponse getVendorById(int id){
+    public VendorResponse getVendorById(int id) {
         return new VendorResponse(getById(id));
     }
 
     //get all vendor
-    public List<VendorResponse> getAllVenodrs(){
-      return vendorRepository.findAll().stream().map(e -> new VendorResponse(e)).collect(Collectors.toList());
+    public List<VendorResponse> getAllVenodrs() {
+        return vendorRepository.findAll().stream().map(e -> new VendorResponse(e)).collect(Collectors.toList());
     }
 
     //Update a Vendor details
@@ -134,7 +166,7 @@ public class VendorService {
     //delete a vendor
     public VendorResponse deleteVendor(int id) throws Exception {
         Vendor vendor = getById(id);
-        if(vendor == null){
+        if (vendor == null) {
             throw new Exception("Vendor doesn't exist");
         }
         vendorRepository.delete(vendor);

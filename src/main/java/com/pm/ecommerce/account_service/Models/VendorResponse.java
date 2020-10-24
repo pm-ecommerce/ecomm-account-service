@@ -1,5 +1,6 @@
 package com.pm.ecommerce.account_service.Models;
 
+import com.pm.ecommerce.entities.Address;
 import com.pm.ecommerce.entities.Vendor;
 import com.pm.ecommerce.enums.VendorStatus;
 import lombok.Data;
@@ -11,8 +12,8 @@ public class VendorResponse {
     protected String name;
     protected String businessName;
     protected String email;
-    protected String password;
     protected VendorStatus status;
+    protected Address address;
 
     public VendorResponse(Vendor vendor) {
         setName(vendor.getName());
@@ -20,5 +21,6 @@ public class VendorResponse {
         setBusinessName(vendor.getBusinessName());
         setEmail(vendor.getEmail());
         setId(vendor.getId());
+        setAddress(vendor.getAddress());
     }
 }
