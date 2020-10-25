@@ -96,7 +96,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    private ResponseEntity<ApiResponse<LoginResponse>> loginEmployee(@RequestBody LoginRequest loginRequest) {
+    private ResponseEntity<ApiResponse<LoginResponse>> loginUser(@RequestBody LoginRequest loginRequest) {
         ApiResponse<LoginResponse> response = new ApiResponse<>();
         try {
             LoginResponse response1 = userService.login(loginRequest);
