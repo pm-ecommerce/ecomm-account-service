@@ -56,6 +56,16 @@ public class EmployeeService {
             throw new Exception("Password did not match");
         }
 
+        if (employee1 == null) {
+            throw new Exception("Data expected with this request");
+        }
+        if (employee1.getEmail() == null || employee1.getEmail().length() == 0) {
+            throw new Exception("Email field is empty");
+        }
+
+        if (!validateEmail(employee1.getEmail())) {
+            throw new Exception("Email is invalid. Please provide a valid email");
+        }
 
         final String token = jwtTokenUtil.generateToken(employee1, "employee");
         LoginResponse loginResponse = new LoginResponse();

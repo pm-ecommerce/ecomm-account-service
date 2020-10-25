@@ -222,6 +222,16 @@ public class VendorService {
             throw new Exception("Your account has not been approved yet");
         }
 
+        if (vendor1 == null) {
+            throw new Exception("Vendor not found!");
+        }
+        if (vendor1.getEmail() == null || vendor1.getEmail().length() == 0) {
+            throw new Exception("Please provide your business email");
+        }
+
+        if (!validateEmail(vendor1.getEmail())) {
+            throw new Exception("Email is invalid. Please provide a valid email");
+        }
 
         final String token = jwtTokenUtil.generateToken(vendor1, "vendor");
         LoginResponse loginResponse = new LoginResponse();

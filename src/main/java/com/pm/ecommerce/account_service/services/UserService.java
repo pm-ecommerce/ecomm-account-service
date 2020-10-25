@@ -114,6 +114,18 @@ public class UserService {
             throw new Exception("Password did not match");
         }
 
+
+        if (user == null) {
+            throw new Exception("User not found");
+        }
+        if (user.getEmail() == null || user.getEmail().length() == 0) {
+            throw new Exception("Email is empty");
+        }
+
+        if (!validateEmail(user.getEmail())) {
+            throw new Exception("Email is invalid. Please provide a valid email");
+        }
+
         final String token = jwtTokenUtil.generateToken(user, "employee");
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
