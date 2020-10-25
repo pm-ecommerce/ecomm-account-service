@@ -35,6 +35,18 @@ public class UserService {
             throw new Exception("Data expected with this request");
         }
 
+        if (user.getPassword() == null || user.getPassword().length() == 0) {
+            throw new Exception("Please provide a password");
+        }
+
+        if (user.getPasswordConfirmation() == null || user.getPasswordConfirmation().length() == 0) {
+            throw new Exception("Please provide a confirmation password");
+        }
+
+        if(!user.getPassword().equals(user.getPasswordConfirmation())){
+            throw new Exception("Password doesn't match!");
+        }
+
         if (user.getEmail() == null || user.getEmail().length() == 0) {
             throw new Exception("Email field is empty");
         }

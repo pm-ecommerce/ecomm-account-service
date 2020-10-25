@@ -36,7 +36,6 @@ public class VendorRequest {
         address.setCountry(country);
         address.setZipcode(zipcode);
         vendor.setAddress(address);
-
         vendor.setPassword(password);
 
         return vendor;

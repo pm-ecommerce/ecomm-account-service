@@ -9,6 +9,7 @@ public class UserRequest {
     protected String name;
     protected String email;
     protected String password;
+    protected String passwordConfirmation;
 
     public User toUser() {
         User user = new User();
