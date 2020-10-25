@@ -1,4 +1,4 @@
-package com.pm.ecommerce.account_service.Models;
+package com.pm.ecommerce.account_service.models;
 
 import com.pm.ecommerce.entities.Address;
 import com.pm.ecommerce.entities.Vendor;
@@ -36,7 +36,6 @@ public class VendorRequest {
         address.setCountry(country);
         address.setZipcode(zipcode);
         vendor.setAddress(address);
-
         vendor.setPassword(password);
 
         return vendor;
