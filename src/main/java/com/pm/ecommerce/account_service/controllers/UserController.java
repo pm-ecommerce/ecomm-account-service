@@ -105,6 +105,7 @@ public class UserController {
             response.setData(response1);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            e.printStackTrace();
             response.setMessage(e.getMessage());
             response.setStatus(500);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

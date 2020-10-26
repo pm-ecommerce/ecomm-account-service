@@ -43,7 +43,7 @@ public class UserService {
             throw new Exception("Please provide a confirmation password");
         }
 
-        if(!user.getPassword().equals(user.getPasswordConfirmation())){
+        if (!user.getPassword().equals(user.getPasswordConfirmation())) {
             throw new Exception("Password doesn't match!");
         }
 
@@ -119,23 +119,21 @@ public class UserService {
     }
 
     public LoginResponse login(LoginRequest request) throws Exception {
-
         User user = getByEmail(request.getEmail());
-        System.out.println(user.getPassword());
-        if (!user.getPassword().equals(request.getPassword())) {
-            throw new Exception("Password did not match");
-        }
-
-
         if (user == null) {
             throw new Exception("User not found");
         }
+
         if (user.getEmail() == null || user.getEmail().length() == 0) {
             throw new Exception("Email is empty");
         }
 
         if (!validateEmail(user.getEmail())) {
             throw new Exception("Email is invalid. Please provide a valid email");
+        }
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new Exception("Password did not match");
         }
 
         final String token = jwtTokenUtil.generateToken(user, "employee");
