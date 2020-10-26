@@ -4,8 +4,12 @@ import com.pm.ecommerce.account_service.models.LoginRequest;
 import com.pm.ecommerce.account_service.models.LoginResponse;
 import com.pm.ecommerce.account_service.models.VendorRequest;
 import com.pm.ecommerce.account_service.models.VendorResponse;
+import com.pm.ecommerce.account_service.repositories.AddressRepository;
+import com.pm.ecommerce.account_service.repositories.TransactionRepository;
 import com.pm.ecommerce.account_service.repositories.VendorRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
+import com.pm.ecommerce.entities.Address;
+import com.pm.ecommerce.entities.Transaction;
 import com.pm.ecommerce.entities.Vendor;
 import com.pm.ecommerce.enums.VendorStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,12 @@ public class VendorService {
 
     @Autowired
     private VendorRepository vendorRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -91,6 +101,9 @@ public class VendorService {
 
         Vendor vendor2 = vendor.toVendor();
 
+        Address address = addressRepository.save(vendor2.getAddress());
+
+        vendor2.setAddress(address);
         vendorRepository.save(vendor2);
 
         return new VendorResponse(vendor2);
@@ -209,6 +222,24 @@ public class VendorService {
         vendorRepository.save(vendor);
         return new VendorResponse(vendor);
     }
+
+
+    public VendorResponse sendForApproval(int id, int paymentId) throws Exception{
+        Vendor vendor = getById(id);
+        if(vendor == null){
+            throw new Exception("Vendor not found");
+        }
+
+        Transaction transaction = transactionRepository.findById(paymentId).orElse(null);
+        if (transaction==null) throw new Exception("Vendor has not made a payment yet");
+
+        vendor.setPayment(transaction);
+        vendor.setStatus(VendorStatus.PAYMENT_DONE);
+        vendorRepository.save(vendor);
+        return new VendorResponse(vendor);
+    }
+
+
 
 
     public LoginResponse login(LoginRequest request) throws Exception {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/vendors")
 public class VendorController {
 
@@ -146,6 +147,23 @@ public class VendorController {
         }
 
     }
+
+    @PatchMapping("/{id}/send-for-approval")
+    public ResponseEntity<ApiResponse<VendorResponse>> sendForApproval(@PathVariable int id, @RequestParam int transactionId) {
+        ApiResponse<VendorResponse> response = new ApiResponse<>();
+        try {
+            VendorResponse vendor1 = vendorService.sendForApproval(id, transactionId);
+            response.setMessage("Vendor Sent for Approval ");
+            response.setData(vendor1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+    }
+
 
 
 }
