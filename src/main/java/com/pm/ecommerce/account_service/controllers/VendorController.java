@@ -1,6 +1,9 @@
 package com.pm.ecommerce.account_service.controllers;
 
-import com.pm.ecommerce.account_service.models.*;
+import com.pm.ecommerce.account_service.models.LoginRequest;
+import com.pm.ecommerce.account_service.models.LoginResponse;
+import com.pm.ecommerce.account_service.models.VendorRequest;
+import com.pm.ecommerce.account_service.models.VendorResponse;
 import com.pm.ecommerce.account_service.services.VendorService;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.ApiResponse;
@@ -163,7 +166,5 @@ public class VendorController {
         }
 
     }
-
-
 
 }

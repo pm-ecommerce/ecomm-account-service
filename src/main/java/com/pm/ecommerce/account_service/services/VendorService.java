@@ -49,7 +49,7 @@ public class VendorService {
             throw new Exception("Please provide a password");
         }
 
-        if(!vendor.getPassword().equals(vendor.getPasswordConfirmation())){
+        if (!vendor.getPassword().equals(vendor.getPasswordConfirmation())) {
             throw new Exception("Password doesn't match!");
         }
 
@@ -196,10 +196,10 @@ public class VendorService {
     //Vendor Approval API
     public VendorResponse approveVendor(int id) throws Exception {
         Vendor vendor = getById(id);
-        if(vendor == null){
-            throw  new Exception("Vendor not found");
+        if (vendor == null) {
+            throw new Exception("Vendor not found");
         }
-        if(vendor.getStatus() != VendorStatus.PAYMENT_DONE){
+        if (vendor.getStatus() != VendorStatus.PAYMENT_DONE) {
             throw new Exception("Please provide the minimum payment for approval");
         }
         vendor.setStatus(VendorStatus.APPROVED);
@@ -208,14 +208,14 @@ public class VendorService {
     }
 
     //Vendor Reject API
-    public VendorResponse rejectVendor(int id) throws Exception{
+    public VendorResponse rejectVendor(int id) throws Exception {
         Vendor vendor = getById(id);
-        if(vendor == null){
+        if (vendor == null) {
             throw new Exception("Vendor not found");
         }
 
-        if(vendor.getStatus() != VendorStatus.PAYMENT_DONE){
-            throw  new Exception("Please provide the minimum payment for approval");
+        if (vendor.getStatus() != VendorStatus.PAYMENT_DONE) {
+            throw new Exception("Please provide the minimum payment for approval");
         }
 
         vendor.setStatus(VendorStatus.UNAPPROVED);
@@ -224,23 +224,20 @@ public class VendorService {
     }
 
 
-    public VendorResponse sendForApproval(int id, int paymentId) throws Exception{
+    public VendorResponse sendForApproval(int id, int paymentId) throws Exception {
         Vendor vendor = getById(id);
-        if(vendor == null){
+        if (vendor == null) {
             throw new Exception("Vendor not found");
         }
 
         Transaction transaction = transactionRepository.findById(paymentId).orElse(null);
-        if (transaction==null) throw new Exception("Vendor has not made a payment yet");
+        if (transaction == null) throw new Exception("Vendor has not made a payment yet");
 
         vendor.setPayment(transaction);
         vendor.setStatus(VendorStatus.PAYMENT_DONE);
         vendorRepository.save(vendor);
         return new VendorResponse(vendor);
     }
-
-
-
 
     public LoginResponse login(LoginRequest request) throws Exception {
 
@@ -249,7 +246,7 @@ public class VendorService {
             throw new Exception("Password did not match");
         }
 
-        if (vendor1.getStatus()!=VendorStatus.APPROVED) {
+        if (vendor1.getStatus() != VendorStatus.APPROVED) {
             throw new Exception("Your account has not been approved yet");
         }
 
