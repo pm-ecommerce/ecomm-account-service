@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/vendors")
 public class VendorController {
 
@@ -36,6 +37,7 @@ public class VendorController {
     @PostMapping("")
     public ResponseEntity<ApiResponse<VendorResponse>> createVendor(@RequestBody VendorRequest vendor) {
         ApiResponse<VendorResponse> response = new ApiResponse<>();
+        System.out.println("Hello");
         try {
             VendorResponse vendor1 = vendorService.createVendor(vendor);
             response.setMessage("Vendor registered successfully");
