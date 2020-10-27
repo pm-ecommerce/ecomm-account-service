@@ -1,4 +1,4 @@
-package com.pm.ecommerce.account_service.Models;
+package com.pm.ecommerce.account_service.models;
 
 import com.pm.ecommerce.entities.Address;
 import com.pm.ecommerce.entities.Vendor;
@@ -13,7 +13,7 @@ public class VendorResponse {
     protected String businessName;
     protected String email;
     protected VendorStatus status;
-    protected Address address;
+    protected AddressResponse address;
 
     public VendorResponse(Vendor vendor) {
         setName(vendor.getName());
@@ -22,7 +22,7 @@ public class VendorResponse {
         setEmail(vendor.getEmail());
         setId(vendor.getId());
         if (vendor.getAddress() != null) {
-            setAddress(vendor.getAddress());
+            setAddress(new AddressResponse(vendor.getAddress()));
         }
     }
 }
