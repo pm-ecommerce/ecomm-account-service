@@ -1,9 +1,6 @@
 package com.pm.ecommerce.account_service.services;
 
-import com.pm.ecommerce.account_service.models.LoginRequest;
-import com.pm.ecommerce.account_service.models.LoginResponse;
-import com.pm.ecommerce.account_service.models.VendorRequest;
-import com.pm.ecommerce.account_service.models.VendorResponse;
+import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.repositories.AddressRepository;
 import com.pm.ecommerce.account_service.repositories.TransactionRepository;
 import com.pm.ecommerce.account_service.repositories.VendorRepository;
@@ -13,6 +10,9 @@ import com.pm.ecommerce.entities.Transaction;
 import com.pm.ecommerce.entities.Vendor;
 import com.pm.ecommerce.enums.VendorStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -136,9 +136,31 @@ public class VendorService {
         return new VendorResponse(getById(id));
     }
 
-    //get all vendor
-    public List<VendorResponse> getAllVenodrs() {
-        return vendorRepository.findAll().stream().map(e -> new VendorResponse(e)).collect(Collectors.toList());
+    /**
+     * Get vendors by status
+     *
+     * @param status       VendorStatus
+     * @param itemsPerPage Integer
+     * @param currentPage  Integer
+     * @return PagedResponse<VendorResponse>
+     */
+    public PagedResponse<VendorResponse> getAllVendorsByStatus(int status, int itemsPerPage, int currentPage) {
+        VendorStatus vendorStatus = VendorStatus.APPROVED;
+        if (status == 1) {
+            vendorStatus = VendorStatus.PAYMENT_DONE;
+        }
+
+        if (status == 2) {
+            vendorStatus = VendorStatus.UNAPPROVED;
+        }
+
+        Pageable paging = PageRequest.of(currentPage - 1, itemsPerPage);
+        Page<Vendor> pagedResult = vendorRepository.findAllByStatus(vendorStatus, paging);
+
+        int totalPages = pagedResult.getTotalPages();
+        List<VendorResponse> response = pagedResult.toList().stream().map(VendorResponse::new).collect(Collectors.toList());
+
+        return new PagedResponse<>(totalPages, currentPage, itemsPerPage, response);
     }
 
     //Update a Vendor details
