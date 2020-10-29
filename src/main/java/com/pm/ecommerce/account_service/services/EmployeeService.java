@@ -4,7 +4,7 @@ import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.repositories.EmployeeRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.Employee;
-import com.pm.ecommerce.entities.User;
+import com.pm.ecommerce.entities.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +24,9 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private RoleService roleService;
 
     //Employee Registration
     public EmployeeResponse createEmployee(EmployeeRequest employee) throws Exception {
@@ -55,7 +58,12 @@ public class EmployeeService {
         if (employee1 != null) {
             throw new Exception("Email is already registered");
         }
+        Role role = roleService.getById(employee.getRole().getId());
+        if(role == null){
+            throw  new Exception("Role not found");
+        }
         Employee employee2 = employee.toEmployee();
+        employee2.setRole(role);
         employeeRepository.save(employee2);
 
         return new EmployeeResponse(employee2);
@@ -83,9 +91,14 @@ public class EmployeeService {
         if (employee2 != null && employee2.getId() != employee1.getId()) {
             throw new Exception("Employee is already being used by another account");
         }
+        Role role = roleService.getById(employee.getRole().getId());
+        if(role == null){
+            throw  new Exception("Role not found");
+        }
         employee1 = employee.toEmployee();
         employee1.setName(employee.getName());
         employee1.setEmail(employee.getEmail());
+        employee1.setRole(role);
         employeeRepository.save(employee1);
         return new EmployeeResponse(employee1);
 

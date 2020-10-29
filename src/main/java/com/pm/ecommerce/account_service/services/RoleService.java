@@ -1,9 +1,11 @@
 package com.pm.ecommerce.account_service.services;
 
 import com.pm.ecommerce.account_service.models.PagedResponse;
+import com.pm.ecommerce.account_service.models.PermissionRequest;
 import com.pm.ecommerce.account_service.models.RoleRequest;
 import com.pm.ecommerce.account_service.models.RoleResponse;
 import com.pm.ecommerce.account_service.repositories.RoleRepository;
+import com.pm.ecommerce.entities.Permission;
 import com.pm.ecommerce.entities.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +22,9 @@ import java.util.stream.Collectors;
 public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private PermissionService permissionService;
 
     //role creation
     public RoleResponse createRole(RoleRequest role) throws Exception {
@@ -34,7 +40,15 @@ public class RoleService {
         if (role1 != null) {
             throw new Exception("Role already exist");
         }
+        List<Permission> permissions = new ArrayList<>();
+        for (PermissionRequest request : role.getPermissions()) {
+            Permission permission = permissionService.getById(request.getId());
+            if (permission != null) {
+                permissions.add(permission);
+            }
+        }
         Role role2 = role.toRole();
+        role2.setPermissions(permissions);
         roleRepository.save(role2);
         return new RoleResponse(role2);
     }
@@ -53,7 +67,15 @@ public class RoleService {
         if (role2 != null && role2.getId() != role1.getId()) {
             throw new Exception("Role already exists");
         }
+        List<Permission> permissions = new ArrayList<>();
+        for (PermissionRequest request : role.getPermissions()) {
+            Permission permission = permissionService.getById(request.getId());
+            if (permission != null) {
+                permissions.add(permission);
+            }
+        }
         role1.setName(role.getName());
+        role1.setPermissions(permissions);
         roleRepository.save(role1);
         return new RoleResponse(role1);
     }

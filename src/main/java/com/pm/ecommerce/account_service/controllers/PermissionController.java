@@ -3,7 +3,6 @@ package com.pm.ecommerce.account_service.controllers;
 import com.pm.ecommerce.account_service.models.PagedResponse;
 import com.pm.ecommerce.account_service.models.PermissionRequest;
 import com.pm.ecommerce.account_service.models.PermissionResponse;
-import com.pm.ecommerce.account_service.models.UserResponse;
 import com.pm.ecommerce.account_service.services.PermissionService;
 import com.pm.ecommerce.entities.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
