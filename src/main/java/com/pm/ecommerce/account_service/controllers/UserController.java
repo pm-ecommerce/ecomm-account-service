@@ -1,9 +1,6 @@
 package com.pm.ecommerce.account_service.controllers;
 
-import com.pm.ecommerce.account_service.models.LoginRequest;
-import com.pm.ecommerce.account_service.models.LoginResponse;
-import com.pm.ecommerce.account_service.models.UserRequest;
-import com.pm.ecommerce.account_service.models.UserResponse;
+import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.services.UserService;
 import com.pm.ecommerce.entities.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +19,16 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
-        ApiResponse<List<UserResponse>> response = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<PagedResponse<UserResponse>>> getAllUsers(
+            @RequestParam(name = "itemsPerPage", defaultValue = "20") int itemsPerPage,
+            @RequestParam(name = "currentPage", defaultValue = "1") int currentPage
+
+    ) {
+        ApiResponse<PagedResponse<UserResponse>> response = new ApiResponse<>();
         try {
-            List<UserResponse> user1 = userService.getAllUsers();
-            response.setMessage("Users Fetched Successfully");
-            response.setData(user1);
+            PagedResponse<UserResponse> users = userService.getAllUsers( itemsPerPage, currentPage);
+            response.setMessage("User fetched successfully");
+            response.setData(users);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setMessage(e.getMessage());

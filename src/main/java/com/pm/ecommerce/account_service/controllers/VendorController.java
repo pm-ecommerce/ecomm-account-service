@@ -1,18 +1,14 @@
 package com.pm.ecommerce.account_service.controllers;
 
-import com.pm.ecommerce.account_service.models.LoginRequest;
-import com.pm.ecommerce.account_service.models.LoginResponse;
-import com.pm.ecommerce.account_service.models.VendorRequest;
-import com.pm.ecommerce.account_service.models.VendorResponse;
+import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.services.VendorService;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.ApiResponse;
+import com.pm.ecommerce.enums.VendorStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -26,10 +22,14 @@ public class VendorController {
     JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<VendorResponse>>> getAllVendors() {
-        ApiResponse<List<VendorResponse>> response = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<PagedResponse<VendorResponse>>> getAllVendors(
+            @RequestParam(name = "itemsPerPage", defaultValue = "20") int itemsPerPage,
+            @RequestParam(name = "currentPage", defaultValue = "1") int currentPage,
+            @RequestParam(name = "status", defaultValue = "3") int status
+    ) {
+        ApiResponse<PagedResponse<VendorResponse>> response = new ApiResponse<>();
         try {
-            List<VendorResponse> vendor1 = vendorService.getAllVenodrs();
+            PagedResponse<VendorResponse> vendor1 = vendorService.getAllVendorsByStatus(status, itemsPerPage, currentPage);
             response.setMessage("Vendor fetched successfully");
             response.setData(vendor1);
             return ResponseEntity.ok(response);
