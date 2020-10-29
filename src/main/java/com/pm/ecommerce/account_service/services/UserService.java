@@ -1,13 +1,13 @@
 package com.pm.ecommerce.account_service.services;
 
-import com.pm.ecommerce.account_service.models.LoginRequest;
-import com.pm.ecommerce.account_service.models.LoginResponse;
-import com.pm.ecommerce.account_service.models.UserRequest;
-import com.pm.ecommerce.account_service.models.UserResponse;
+import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.repositories.UserRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,10 +24,6 @@ public class UserService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    //get all users
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(e -> new UserResponse(e)).collect(Collectors.toList());
-    }
 
     //create a new user
     public UserResponse createUser(UserRequest user) throws Exception {
@@ -136,7 +132,7 @@ public class UserService {
             throw new Exception("Password did not match");
         }
 
-        final String token = jwtTokenUtil.generateToken(user, "employee");
+        final String token = jwtTokenUtil.generateToken(user, "user");
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
         loginResponse.setName(user.getName());
@@ -144,6 +140,17 @@ public class UserService {
         return loginResponse;
 
     }
+
+    public PagedResponse<UserResponse> getAllUsers(int itemsPerPage, int currentPage) {
+        Pageable paging = PageRequest.of(currentPage - 1, itemsPerPage);
+        Page<User> pagedResult = userRepository.findAll(paging);
+
+        int totalPages = pagedResult.getTotalPages();
+        List<UserResponse> response = pagedResult.toList().stream().map(UserResponse::new).collect(Collectors.toList());
+
+        return new PagedResponse<>(totalPages, currentPage, itemsPerPage, response);
+    }
+
 
     // get user by Email
     public User getByEmail(String email) {
