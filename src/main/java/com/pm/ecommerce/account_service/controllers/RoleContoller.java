@@ -22,7 +22,7 @@ public class RoleContoller {
         ApiResponse<RoleResponse> response = new ApiResponse<>();
         try {
             RoleResponse response1 = roleService.createRole(role);
-            response.setMessage("Role is created successfuly");
+            response.setMessage("Role is created successfully");
             response.setData(response1);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
