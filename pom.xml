@@ -66,7 +66,6 @@
             <version>1.4.8</version>
         </dependency>
 
-        <!-- Spring cloud config, Eureka client, PM entities and Retry-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
