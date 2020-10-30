@@ -4,7 +4,6 @@ import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.services.VendorService;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.ApiResponse;
-import com.pm.ecommerce.enums.VendorStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequestMapping("/api/vendors")
 public class VendorController {
-
     @Autowired
     private VendorService vendorService;
 
