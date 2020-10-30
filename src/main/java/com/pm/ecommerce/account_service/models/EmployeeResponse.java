@@ -16,6 +16,9 @@ public class EmployeeResponse {
         setName(employee.getName());
         setEmail(employee.getEmail());
         setId(employee.getId());
-        setRole(employee.getRole().getName());
+        if (employee.getRole() != null) {
+            setRole(employee.getRole().getName());
+        }
+
     }
 }
