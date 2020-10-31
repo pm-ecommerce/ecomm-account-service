@@ -72,7 +72,7 @@ public class EmployeeController {
     }
 
     @PatchMapping("/{id}")
-    private ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(@RequestBody EmployeeRequest employee, @PathVariable  int id) {
+    public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(@RequestBody EmployeeRequest employee, @PathVariable  int id) {
         ApiResponse<EmployeeResponse> response = new ApiResponse<>();
         try {
             EmployeeResponse employee1 = employeeService.updateEmployee(employee, id);
@@ -88,7 +88,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/login")
-    private ResponseEntity<ApiResponse<LoginResponse>> loginEmployee(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<LoginResponse>> loginEmployee(@RequestBody LoginRequest loginRequest) {
         ApiResponse<LoginResponse> response = new ApiResponse<>();
         try {
             LoginResponse response1 = employeeService.login(loginRequest);
@@ -102,5 +102,18 @@ public class EmployeeController {
         }
     }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<EmployeeResponse>> deleteAnEmployee(@PathVariable("id") int id){
+        ApiResponse<EmployeeResponse> response = new ApiResponse<>();
+        try{
+            EmployeeResponse response1 = employeeService.deleteAnEmployee(id);
+            response.setMessage("Employee Deleted Successfully. ");
+            response.setData(response1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

@@ -143,7 +143,7 @@ public class UserService {
 
     public PagedResponse<UserResponse> getAllUsers(int itemsPerPage, int currentPage) {
         Pageable paging = PageRequest.of(currentPage - 1, itemsPerPage);
-        Page<User> pagedResult = userRepository.findAll(paging);
+        Page<User> pagedResult = userRepository.findAllByPasswordNotNull(paging);
 
         int totalPages = pagedResult.getTotalPages();
         List<UserResponse> response = pagedResult.toList().stream().map(UserResponse::new).collect(Collectors.toList());
@@ -151,6 +151,15 @@ public class UserService {
         return new PagedResponse<>(totalPages, currentPage, itemsPerPage, response);
     }
 
+    public PagedResponse<UserResponse> getAllGuestUsers(int itemsPerPage, int currentPage) {
+        Pageable paging = PageRequest.of(currentPage - 1, itemsPerPage);
+        Page<User> pagedResult = userRepository.findAllByPasswordNull(paging);
+
+        int totalPages = pagedResult.getTotalPages();
+        List<UserResponse> response = pagedResult.toList().stream().map(UserResponse::new).collect(Collectors.toList());
+
+        return new PagedResponse<>(totalPages, currentPage, itemsPerPage, response);
+    }
 
     // get user by Email
     public User getByEmail(String email) {

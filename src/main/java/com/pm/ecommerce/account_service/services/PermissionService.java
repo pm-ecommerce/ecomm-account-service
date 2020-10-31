@@ -41,6 +41,29 @@ public class PermissionService {
         return new PermissionResponse(permission1);
     }
 
+    //permission updated
+    public PermissionResponse updatePermission(PermissionRequest permission, int id) throws Exception {
+        Permission permission1 = getById(id);
+        if (permission1 == null) {
+            throw new Exception("Data expected with this request");
+        }
+        if(permission.getPath() == null){
+            throw new Exception("Path hould not be null");
+        }
+
+        if (permission.getAction() == null) {
+            throw new Exception("Action should not be null");
+        }
+        permission1.setPath(permission.getPath());
+        if(permission.getName() != null) {
+            permission1.setName(permission.getName());
+        }
+        permission1.setAction(permission.getAction());
+        permissionRepository.save(permission1);
+        return new PermissionResponse(permission1);
+
+    }
+
     //get permission by Id
     public Permission getById(int id) {
         return permissionRepository.findById(id).orElse(null);

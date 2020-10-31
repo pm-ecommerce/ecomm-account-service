@@ -10,12 +10,15 @@ public class EmployeeResponse {
     protected int id;
     protected String name;
     protected String email;
-    protected String role;
+    protected RoleResponse role;
 
     public EmployeeResponse(Employee employee) {
         setName(employee.getName());
         setEmail(employee.getEmail());
         setId(employee.getId());
-        setRole(employee.getRole().getName());
+        if (employee.getRole() != null) {
+            setRole(new RoleResponse(employee.getRole()));
+        }
+
     }
 }

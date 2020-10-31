@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin
 @RequestMapping("/api/users")
@@ -26,7 +24,26 @@ public class UserController {
     ) {
         ApiResponse<PagedResponse<UserResponse>> response = new ApiResponse<>();
         try {
-            PagedResponse<UserResponse> users = userService.getAllUsers( itemsPerPage, currentPage);
+            PagedResponse<UserResponse> users = userService.getAllUsers(itemsPerPage, currentPage);
+            response.setMessage("User fetched successfully");
+            response.setData(users);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/guests")
+    public ResponseEntity<ApiResponse<PagedResponse<UserResponse>>> getAllGuestUsers(
+            @RequestParam(name = "itemsPerPage", defaultValue = "20") int itemsPerPage,
+            @RequestParam(name = "currentPage", defaultValue = "1") int currentPage
+
+    ) {
+        ApiResponse<PagedResponse<UserResponse>> response = new ApiResponse<>();
+        try {
+            PagedResponse<UserResponse> users = userService.getAllGuestUsers(itemsPerPage, currentPage);
             response.setMessage("User fetched successfully");
             response.setData(users);
             return ResponseEntity.ok(response);
@@ -71,7 +88,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserRequest user, @PathVariable int id) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         try {
-            UserResponse user1 = userService.updateUser(user,id);
+            UserResponse user1 = userService.updateUser(user, id);
             response.setMessage("User Updated Successfully");
             response.setData(user1);
             return ResponseEntity.ok(response);
@@ -83,7 +100,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> deleteUser( @PathVariable int id) {
+    public ResponseEntity<ApiResponse<UserResponse>> deleteUser(@PathVariable int id) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         try {
             UserResponse user1 = userService.deleteUser(id);
