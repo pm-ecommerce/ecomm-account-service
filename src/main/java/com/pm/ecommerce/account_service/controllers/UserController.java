@@ -84,6 +84,21 @@ public class UserController {
         }
     }
 
+    @PostMapping("/guests")
+    public ResponseEntity<ApiResponse<UserResponse>> createGuestUser(@RequestBody UserRequest user) {
+        ApiResponse<UserResponse> response = new ApiResponse<>();
+        try {
+            UserResponse user1 = userService.createGuestUser(user);
+            response.setMessage("Guest Created Successfully");
+            response.setData(user1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserRequest user, @PathVariable int id) {
         ApiResponse<UserResponse> response = new ApiResponse<>();

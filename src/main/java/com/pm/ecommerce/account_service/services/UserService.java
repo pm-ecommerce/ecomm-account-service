@@ -66,6 +66,35 @@ public class UserService {
         return new UserResponse(user2);
     }
 
+    public UserResponse createGuestUser(UserRequest user) throws Exception {
+        if (user == null) {
+            throw new Exception("Data expected with this request");
+        }
+
+        if (user.getEmail() == null || user.getEmail().length() == 0) {
+            throw new Exception("Email field is empty");
+        }
+
+        if (!validateEmail(user.getEmail())) {
+            throw new Exception("Please provide a valid email");
+        }
+
+        if (user.getName() == null || user.getName().length() == 0) {
+            throw new Exception("Name field is Empty");
+        }
+
+        User user1 = getByEmail(user.getEmail());
+        if (user1 != null) {
+            throw new Exception("User with this email already exists!");
+        }
+
+        User user2 = user.toUser();
+        userRepository.save(user2);
+
+        return new UserResponse(user2);
+    }
+
+
     //update a User
     public UserResponse updateUser(UserRequest user, int id) throws Exception {
         User user1 = getById(id);
