@@ -4,6 +4,7 @@ import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.services.VendorService;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.ApiResponse;
+import com.pm.ecommerce.entities.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -163,6 +164,26 @@ public class VendorController {
             response.setStatus(500);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+
+    }
+
+
+    @PatchMapping("/{vendorid}/update/")
+    public ResponseEntity<ApiResponse<VendorResponse>> updatevendorpassword(@RequestBody Vendor vendor, @PathVariable int vendorid){
+
+        ApiResponse<VendorResponse> response = new ApiResponse<>();
+
+        try {
+            VendorResponse updated = vendorService.updatevendorinformation(vendor,vendorid);
+            response.setStatus(200);
+            response.setData(updated);
+            response.setMessage("successfully update user password");
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+        }
+        return ResponseEntity.ok(response);
+
 
     }
 

@@ -293,4 +293,29 @@ public class VendorService {
 
     }
 
+    public VendorResponse updatevendorinformation(Vendor vendor, int vendorid) throws Exception{
+
+        Vendor findvendor=vendorRepository.findById(vendorid).orElse(null);
+        if(findvendor==null){
+
+            throw new Exception("vendor not found");
+        }
+        if(vendor.getPassword()==null){
+
+            throw new Exception("you did not fill the pssword");
+        }
+        if(!findvendor.getPassword().equals(vendor.getPassword())){
+
+            findvendor.setPassword(vendor.getPassword());
+
+        }
+        else{
+            throw new Exception("you insert the previous password");
+        }
+        vendorRepository.save(findvendor);
+
+
+        return new VendorResponse(findvendor);
+    }
+
 }

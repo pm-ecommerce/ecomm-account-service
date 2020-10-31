@@ -176,5 +176,29 @@ public class EmployeeService {
         return new EmployeeResponse(employee);
     }
 
+    public EmployeeResponse updateEmployeeInformation(EmployeeRequest employee, int empid) throws Exception{
+
+        Employee findemployee=employeeRepository.findById(empid).orElse(null);
+        if(findemployee==null){
+
+            throw new Exception("employee not found");
+        }
+        if(employee.getPassword()==null){
+
+            throw new Exception("you did not fill the pssword");
+        }
+        if(!findemployee.getPassword().equals(employee.getPassword())){
+
+            findemployee.setPassword(employee.getPassword());
+
+        }
+        else{
+            throw new Exception("you insert the previous password");
+        }
+
+        employeeRepository.save(findemployee);
+        return new EmployeeResponse(findemployee);
+    }
+
 
 }

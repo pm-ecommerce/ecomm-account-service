@@ -204,5 +204,30 @@ public class UserService {
         return new UserResponse(getById(id));
     }
 
+    public UserResponse updateuserinformation(User user, int userid) throws Exception{
+
+        User finduser=userRepository.findById(userid).orElse(null);
+        if(finduser==null){
+
+            throw new Exception("user not found");
+        }
+        if(user.getPassword()==null){
+
+            throw new Exception("you did not fill the pssword");
+        }
+        if(!finduser.getPassword().equals(user.getPassword())){
+
+            finduser.setPassword(user.getPassword());
+
+        }
+        else{
+            throw new Exception("you insert the previous password");
+        }
+        userRepository.save(finduser);
+
+
+        return new UserResponse(finduser);
+    }
+
 
 }

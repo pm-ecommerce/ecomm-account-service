@@ -4,6 +4,7 @@ import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.services.EmployeeService;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.ApiResponse;
+import com.pm.ecommerce.entities.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -116,4 +117,24 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+
+    @PatchMapping("/{employeeid}/update/")
+    public ResponseEntity<ApiResponse<EmployeeResponse>>  updateemployeerpassword(@RequestBody EmployeeRequest employee, @PathVariable int employeeid){
+
+        ApiResponse<EmployeeResponse> response = new ApiResponse<>();
+
+        try {
+            EmployeeResponse updated = employeeService.updateEmployeeInformation(employee,employeeid);
+            response.setStatus(200);
+            response.setData(updated);
+            response.setMessage("successfully update employee password");
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+        }
+        return ResponseEntity.ok(response);
+
+    }
+
 }
