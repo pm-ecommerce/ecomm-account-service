@@ -27,7 +27,7 @@ public class RoleService {
     private PermissionService permissionService;
 
     //role creation
-    public RoleResponse createRole(RoleRequest role) throws Exception {
+    public Role createRole(RoleRequest role) throws Exception {
         if (role == null) {
             throw new Exception("Data expected with this request.");
         }
@@ -49,12 +49,12 @@ public class RoleService {
         }
         Role role2 = role.toRole();
         role2.setPermissions(permissions);
-        roleRepository.save(role2);
-        return new RoleResponse(role2);
+        return roleRepository.save(role2);
+
     }
 
     //update role
-    public RoleResponse updateRole(RoleRequest role, int id) throws Exception {
+    public Role updateRole(RoleRequest role, int id) throws Exception {
         Role role1 = getById(id);
         if (role1 == null) {
             throw new Exception("role not found");
@@ -76,8 +76,8 @@ public class RoleService {
         }
         role1.setName(role.getName());
         role1.setPermissions(permissions);
-        roleRepository.save(role1);
-        return new RoleResponse(role1);
+        return roleRepository.save(role1);
+
     }
 
     //get all roles
@@ -95,8 +95,8 @@ public class RoleService {
         return roleRepository.findById(id).orElse(null);
     }
 
-    public RoleResponse getRoleById(int id) {
-        return new RoleResponse(getById(id));
+    public Role getRoleById(int id) {
+        return getById(id);
     }
 
     //delete role

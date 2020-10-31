@@ -5,6 +5,7 @@ import com.pm.ecommerce.account_service.models.RoleRequest;
 import com.pm.ecommerce.account_service.models.RoleResponse;
 import com.pm.ecommerce.account_service.services.RoleService;
 import com.pm.ecommerce.entities.ApiResponse;
+import com.pm.ecommerce.entities.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +14,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin
 @RequestMapping("/api/roles")
-public class RoleContoller {
+public class RoleController {
 
     @Autowired
     private RoleService roleService;
 
     @PostMapping("")
-    private ResponseEntity<ApiResponse<RoleResponse>> createRole(@RequestBody RoleRequest role) {
-        ApiResponse<RoleResponse> response = new ApiResponse<>();
+    private ResponseEntity<ApiResponse<Role>> createRole(@RequestBody RoleRequest role) {
+        ApiResponse<Role> response = new ApiResponse<>();
         try {
-            RoleResponse response1 = roleService.createRole(role);
+            Role response1 = roleService.createRole(role);
             response.setMessage("Role is created successfully");
             response.setData(response1);
             return ResponseEntity.ok(response);
@@ -34,10 +35,10 @@ public class RoleContoller {
     }
 
     @PatchMapping("/{id}")
-    private ResponseEntity<ApiResponse<RoleResponse>> updateRole(@RequestBody RoleRequest role, @PathVariable int id) {
-        ApiResponse<RoleResponse> response = new ApiResponse<>();
+    private ResponseEntity<ApiResponse<Role>> updateRole(@RequestBody RoleRequest role, @PathVariable int id) {
+        ApiResponse<Role> response = new ApiResponse<>();
         try {
-            RoleResponse response1 = roleService.updateRole(role, id);
+            Role response1 = roleService.updateRole(role, id);
             response.setMessage("Role is updated successfully");
             response.setData(response1);
             return ResponseEntity.ok(response);
@@ -83,10 +84,10 @@ public class RoleContoller {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<RoleResponse>> getRoleById(@PathVariable int id) {
-        ApiResponse<RoleResponse> response = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<Role>> getRoleById(@PathVariable("id") int id) {
+        ApiResponse<Role> response = new ApiResponse<>();
         try {
-            RoleResponse role = roleService.getRoleById(id);
+            Role role = roleService.getRoleById(id);
             response.setMessage("Roles Fetched Successfully");
             response.setData(role);
             return ResponseEntity.ok(response);

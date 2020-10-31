@@ -34,6 +34,23 @@ public class PermissionController {
 
     }
 
+    //update Permission
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<PermissionResponse>> updatePermission(@RequestBody PermissionRequest permission, @PathVariable("id") int id) {
+        ApiResponse<PermissionResponse> response = new ApiResponse<>();
+        try {
+            PermissionResponse permissionResponse = permissionService.updatePermission(permission, id);
+            response.setMessage("Permission updated successfuly");
+            response.setData(permissionResponse);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+    }
+
 
     @GetMapping("")
     public ResponseEntity<ApiResponse<PagedResponse<PermissionResponse>>> getAllPermission(
@@ -70,7 +87,7 @@ public class PermissionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<PermissionResponse>> deletePermission( @PathVariable int id) {
+    public ResponseEntity<ApiResponse<PermissionResponse>> deletePermission(@PathVariable int id) {
         ApiResponse<PermissionResponse> response = new ApiResponse<>();
         try {
             PermissionResponse permission = permissionService.deletePermission(id);
