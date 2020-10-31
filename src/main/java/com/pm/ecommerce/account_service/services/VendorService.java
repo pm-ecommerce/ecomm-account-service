@@ -264,6 +264,10 @@ public class VendorService {
     public LoginResponse login(LoginRequest request) throws Exception {
 
         Vendor vendor1 = getByEmail(request.getEmail());
+        if (vendor1 == null) {
+            throw new Exception("Vendor not found!");
+        }
+
         if (!vendor1.getPassword().equals(request.getPassword())) {
             throw new Exception("Password did not match");
         }
@@ -272,9 +276,6 @@ public class VendorService {
             throw new Exception("Your account has not been approved yet");
         }
 
-        if (vendor1 == null) {
-            throw new Exception("Vendor not found!");
-        }
         if (vendor1.getEmail() == null || vendor1.getEmail().length() == 0) {
             throw new Exception("Please provide your business email");
         }
