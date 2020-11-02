@@ -15,22 +15,21 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequestMapping("/api/token")
 public class TokenController {
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
 
-        @Autowired
-        JwtTokenUtil jwtTokenUtil;
-
-        @Autowired
-        private UserService userService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserByToken(@RequestParam String tokenstr, @RequestParam String userType) {
+    public ResponseEntity<ApiResponse<UserResponse>> getUserByToken(@RequestParam(name = "token", required = true) String token) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
         try {
-            Claims claims = jwtTokenUtil.extractAllClaims(tokenstr);
+            Claims claims = jwtTokenUtil.extractAllClaims(token);
             int userId = (int) claims.get("id");
             String type = (String) claims.get("type");
             UserResponse user1 = userService.getUserById(userId);
-            System.out.println("User id " +userId);
+            System.out.println("User id " + userId);
             response.setMessage("Users Fetched Successfully");
             response.setData(user1);
             return ResponseEntity.ok(response);

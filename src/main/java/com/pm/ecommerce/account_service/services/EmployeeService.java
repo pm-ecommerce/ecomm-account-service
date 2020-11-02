@@ -136,6 +136,8 @@ public class EmployeeService {
         final String token = jwtTokenUtil.generateToken(employee1, "employee");
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
+        loginResponse.setId(employee1.getId());
+        loginResponse.setEmail(employee1.getEmail());
         loginResponse.setName(employee1.getName());
 
         return loginResponse;
@@ -173,6 +175,35 @@ public class EmployeeService {
             throw new Exception("Employee isn't registered");
         }
         employeeRepository.delete(employee);
+        return new EmployeeResponse(employee);
+    }
+
+    //update employee password
+    public EmployeeResponse updatePassword(EmployeeRequest request, int id) throws Exception {
+        if (request == null) {
+            throw new Exception("Data expected with this request.");
+        }
+
+        if (request.getPassword() == null) {
+            throw new Exception("Password is missing");
+        }
+
+        if (request.getPasswordConfirmation() == null) {
+            throw new Exception("Password confirmation is missing");
+        }
+
+        if (!request.getPasswordConfirmation().equals(request.getPassword())) {
+            throw new Exception("Passwords do not match");
+        }
+
+        Employee employee = getById(id);
+        if (employee == null) {
+            throw new Exception("Employee not found");
+        }
+
+        employee.setPassword(request.getPassword());
+        employeeRepository.save(employee);
+
         return new EmployeeResponse(employee);
     }
 

@@ -286,8 +286,10 @@ public class VendorService {
 
         final String token = jwtTokenUtil.generateToken(vendor1, "vendor");
         LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setId(vendor1.getId());
+        loginResponse.setEmail(vendor1.getEmail());
         loginResponse.setToken(token);
-        loginResponse.setName(vendor1.getName());
+        loginResponse.setName(vendor1.getBusinessName());
 
         return loginResponse;
 

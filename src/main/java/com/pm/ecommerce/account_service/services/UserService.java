@@ -163,6 +163,8 @@ public class UserService {
 
         final String token = jwtTokenUtil.generateToken(user, "user");
         LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setId(user.getId());
+        loginResponse.setEmail(user.getEmail());
         loginResponse.setToken(token);
         loginResponse.setName(user.getName());
 

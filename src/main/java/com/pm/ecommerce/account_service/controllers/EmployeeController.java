@@ -72,7 +72,7 @@ public class EmployeeController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(@RequestBody EmployeeRequest employee, @PathVariable  int id) {
+    public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(@RequestBody EmployeeRequest employee, @PathVariable int id) {
         ApiResponse<EmployeeResponse> response = new ApiResponse<>();
         try {
             EmployeeResponse employee1 = employeeService.updateEmployee(employee, id);
@@ -102,10 +102,25 @@ public class EmployeeController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<EmployeeResponse>> deleteAnEmployee(@PathVariable("id") int id){
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployeePassword(@RequestBody EmployeeRequest request, @PathVariable int id) {
         ApiResponse<EmployeeResponse> response = new ApiResponse<>();
-        try{
+        try {
+            EmployeeResponse response1 = employeeService.updatePassword(request, id);
+            response.setMessage("Password updated Successfully. ");
+            response.setData(response1);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<EmployeeResponse>> deleteAnEmployee(@PathVariable("id") int id) {
+        ApiResponse<EmployeeResponse> response = new ApiResponse<>();
+        try {
             EmployeeResponse response1 = employeeService.deleteAnEmployee(id);
             response.setMessage("Employee Deleted Successfully. ");
             response.setData(response1);
