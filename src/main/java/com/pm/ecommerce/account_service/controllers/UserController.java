@@ -147,16 +147,16 @@ public class UserController {
     }
 
 
-    @PatchMapping("/{userid}/update/")
-    public ResponseEntity<ApiResponse<UserResponse>>updateuserpassword(@RequestBody User user, @PathVariable int userid){
+    @PatchMapping("/{userid}/update-password/")
+    public ResponseEntity<ApiResponse<UserResponse>>updateuserpassword(@RequestBody UserRequest user, @PathVariable int userid){
 
         ApiResponse<UserResponse> response = new ApiResponse<>();
 
         try {
-            UserResponse updated = userService.updateuserinformation(user,userid);
+            UserResponse updated = userService.updatePassword(user,userid);
             response.setStatus(200);
             response.setData(updated);
-            response.setMessage("successfully update user password");
+            response.setMessage("successfully update vendor password");
         } catch (Exception e) {
             response.setMessage(e.getMessage());
             response.setStatus(500);

@@ -168,16 +168,16 @@ public class VendorController {
     }
 
 
-    @PatchMapping("/{vendorid}/update/")
-    public ResponseEntity<ApiResponse<VendorResponse>> updatevendorpassword(@RequestBody Vendor vendor, @PathVariable int vendorid){
+    @PatchMapping("/{vendorid}/update-password/")
+    public ResponseEntity<ApiResponse<VendorResponse>> updatevendorpassword(@RequestBody VendorRequest vendor, @PathVariable int vendorid){
 
         ApiResponse<VendorResponse> response = new ApiResponse<>();
 
         try {
-            VendorResponse updated = vendorService.updatevendorinformation(vendor,vendorid);
+            VendorResponse updated = vendorService.updatePassword(vendor,vendorid);
             response.setStatus(200);
             response.setData(updated);
-            response.setMessage("successfully update user password");
+            response.setMessage("successfully update vendor password");
         } catch (Exception e) {
             response.setMessage(e.getMessage());
             response.setStatus(500);

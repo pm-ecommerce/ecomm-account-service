@@ -119,13 +119,13 @@ public class EmployeeController {
     }
 
 
-    @PatchMapping("/{employeeid}/update/")
+    @PatchMapping("/{employeeid}/update-password/")
     public ResponseEntity<ApiResponse<EmployeeResponse>>  updateemployeerpassword(@RequestBody EmployeeRequest employee, @PathVariable int employeeid){
 
         ApiResponse<EmployeeResponse> response = new ApiResponse<>();
 
         try {
-            EmployeeResponse updated = employeeService.updateEmployeeInformation(employee,employeeid);
+            EmployeeResponse updated = employeeService.updatePassword(employee,employeeid);
             response.setStatus(200);
             response.setData(updated);
             response.setMessage("successfully update employee password");

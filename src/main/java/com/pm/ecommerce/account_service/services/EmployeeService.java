@@ -176,28 +176,32 @@ public class EmployeeService {
         return new EmployeeResponse(employee);
     }
 
-    public EmployeeResponse updateEmployeeInformation(EmployeeRequest employee, int empid) throws Exception{
-
-        Employee findemployee=employeeRepository.findById(empid).orElse(null);
-        if(findemployee==null){
-
-            throw new Exception("employee not found");
-        }
-        if(employee.getPassword()==null){
-
-            throw new Exception("you did not fill the pssword");
-        }
-        if(!findemployee.getPassword().equals(employee.getPassword())){
-
-            findemployee.setPassword(employee.getPassword());
-
-        }
-        else{
-            throw new Exception("you insert the previous password");
+    public EmployeeResponse updatePassword(EmployeeRequest request, int id) throws Exception {
+        if (request == null) {
+            throw new Exception("Data expected with this request.");
         }
 
-        employeeRepository.save(findemployee);
-        return new EmployeeResponse(findemployee);
+        if (request.getPassword() == null) {
+            throw new Exception("Password is missing");
+        }
+
+        if (request.getPasswordConfirmation() == null) {
+            throw new Exception("Password confirmation is missing");
+        }
+
+        if (!request.getPasswordConfirmation().equals(request.getPassword())) {
+            throw new Exception("Passwords do not match");
+        }
+
+        Employee employee = getById(id);
+        if (employee == null) {
+            throw new Exception("Employee not found");
+        }
+
+        employee.setPassword(request.getPassword());
+        employeeRepository.save(employee);
+
+        return new EmployeeResponse(employee);
     }
 
 

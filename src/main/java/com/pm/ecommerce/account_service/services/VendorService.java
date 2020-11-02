@@ -6,6 +6,7 @@ import com.pm.ecommerce.account_service.repositories.TransactionRepository;
 import com.pm.ecommerce.account_service.repositories.VendorRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.Address;
+import com.pm.ecommerce.entities.Employee;
 import com.pm.ecommerce.entities.Transaction;
 import com.pm.ecommerce.entities.Vendor;
 import com.pm.ecommerce.enums.VendorStatus;
@@ -293,29 +294,32 @@ public class VendorService {
 
     }
 
-    public VendorResponse updatevendorinformation(Vendor vendor, int vendorid) throws Exception{
+    public VendorResponse updatePassword(VendorRequest request, int id) throws Exception {
+        if (request == null) {
+            throw new Exception("Data expected with this request.");
+        }
 
-        Vendor findvendor=vendorRepository.findById(vendorid).orElse(null);
-        if(findvendor==null){
+        if (request.getPassword() == null) {
+            throw new Exception("Password is missing");
+        }
 
+        if (request.getPasswordConfirmation() == null) {
+            throw new Exception("Password confirmation is missing");
+        }
+
+        if (!request.getPasswordConfirmation().equals(request.getPassword())) {
+            throw new Exception("Passwords do not match");
+        }
+
+        Vendor vendor = getById(id);
+        if (vendor == null) {
             throw new Exception("vendor not found");
         }
-        if(vendor.getPassword()==null){
 
-            throw new Exception("you did not fill the pssword");
-        }
-        if(!findvendor.getPassword().equals(vendor.getPassword())){
+        vendor.setPassword(request.getPassword());
+        vendorRepository.save(vendor);
 
-            findvendor.setPassword(vendor.getPassword());
-
-        }
-        else{
-            throw new Exception("you insert the previous password");
-        }
-        vendorRepository.save(findvendor);
-
-
-        return new VendorResponse(findvendor);
+        return new VendorResponse(vendor);
     }
 
 }

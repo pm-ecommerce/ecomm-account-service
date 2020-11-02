@@ -3,6 +3,7 @@ package com.pm.ecommerce.account_service.services;
 import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.repositories.UserRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
+import com.pm.ecommerce.entities.Employee;
 import com.pm.ecommerce.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -204,30 +205,32 @@ public class UserService {
         return new UserResponse(getById(id));
     }
 
-    public UserResponse updateuserinformation(User user, int userid) throws Exception{
-
-        User finduser=userRepository.findById(userid).orElse(null);
-        if(finduser==null){
-
-            throw new Exception("user not found");
+    public UserResponse updatePassword(UserRequest request, int id) throws Exception {
+        if (request == null) {
+            throw new Exception("Data expected with this request.");
         }
-        if(user.getPassword()==null){
 
-            throw new Exception("you did not fill the pssword");
+        if (request.getPassword() == null) {
+            throw new Exception("Password is missing");
         }
-        if(!finduser.getPassword().equals(user.getPassword())){
 
-            finduser.setPassword(user.getPassword());
-
+        if (request.getPasswordConfirmation() == null) {
+            throw new Exception("Password confirmation is missing");
         }
-        else{
-            throw new Exception("you insert the previous password");
+
+        if (!request.getPasswordConfirmation().equals(request.getPassword())) {
+            throw new Exception("Passwords do not match");
         }
-        userRepository.save(finduser);
 
+        User user = getById(id);
+        if (user == null) {
+            throw new Exception("User not found");
+        }
 
-        return new UserResponse(finduser);
+        user.setPassword(request.getPassword());
+        userRepository.save(user);
+
+        return new UserResponse(user);
     }
-
 
 }
