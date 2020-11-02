@@ -3,6 +3,7 @@ package com.pm.ecommerce.account_service.services;
 import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.repositories.UserRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
+import com.pm.ecommerce.entities.Employee;
 import com.pm.ecommerce.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -210,5 +211,32 @@ public class UserService {
         return new UserResponse(getById(id));
     }
 
+    public UserResponse updatePassword(UserRequest request, int id) throws Exception {
+        if (request == null) {
+            throw new Exception("Data expected with this request.");
+        }
+
+        if (request.getPassword() == null) {
+            throw new Exception("Password is missing");
+        }
+
+        if (request.getPasswordConfirmation() == null) {
+            throw new Exception("Password confirmation is missing");
+        }
+
+        if (!request.getPasswordConfirmation().equals(request.getPassword())) {
+            throw new Exception("Passwords do not match");
+        }
+
+        User user = getById(id);
+        if (user == null) {
+            throw new Exception("User not found");
+        }
+
+        user.setPassword(request.getPassword());
+        userRepository.save(user);
+
+        return new UserResponse(user);
+    }
 
 }

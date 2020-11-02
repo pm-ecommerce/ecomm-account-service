@@ -9,6 +9,7 @@ import com.pm.ecommerce.account_service.repositories.TransactionRepository;
 import com.pm.ecommerce.account_service.repositories.VendorRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.Address;
+import com.pm.ecommerce.entities.Employee;
 import com.pm.ecommerce.entities.Transaction;
 import com.pm.ecommerce.entities.Vendor;
 import com.pm.ecommerce.enums.VendorStatus;
@@ -239,7 +240,6 @@ public class VendorService {
 
         vendorRepository.save(vendor);
 
-
         // notify the vendor
         publisher.publishEvent(new VendorApprovedEvent(this, vendor));
 
@@ -318,6 +318,34 @@ public class VendorService {
 
         return loginResponse;
 
+    }
+
+    public VendorResponse updatePassword(VendorRequest request, int id) throws Exception {
+        if (request == null) {
+            throw new Exception("Data expected with this request.");
+        }
+
+        if (request.getPassword() == null) {
+            throw new Exception("Password is missing");
+        }
+
+        if (request.getPasswordConfirmation() == null) {
+            throw new Exception("Password confirmation is missing");
+        }
+
+        if (!request.getPasswordConfirmation().equals(request.getPassword())) {
+            throw new Exception("Passwords do not match");
+        }
+
+        Vendor vendor = getById(id);
+        if (vendor == null) {
+            throw new Exception("vendor not found");
+        }
+
+        vendor.setPassword(request.getPassword());
+        vendorRepository.save(vendor);
+
+        return new VendorResponse(vendor);
     }
 
 }

@@ -179,7 +179,6 @@ public class EmployeeService {
         return new EmployeeResponse(employee);
     }
 
-    //update employee password
     public EmployeeResponse updatePassword(EmployeeRequest request, int id) throws Exception {
         if (request == null) {
             throw new Exception("Data expected with this request.");
