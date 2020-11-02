@@ -65,6 +65,7 @@ public class EmployeeService {
         }
         Employee employee2 = employee.toEmployee();
         employee2.setRole(role);
+        employee2.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         employeeRepository.save(employee2);
 
         return new EmployeeResponse(employee2);

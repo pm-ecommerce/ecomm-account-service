@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,6 +62,7 @@ public class UserService {
         }
 
         User user2 = user.toUser();
+        user2.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user2);
 
         return new UserResponse(user2);
@@ -89,6 +91,7 @@ public class UserService {
         }
 
         User user2 = user.toUser();
+        user2.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user2);
 
         return new UserResponse(user2);
@@ -120,6 +123,7 @@ public class UserService {
         User user3 = user.toUser();
         user1.setName(user3.getName());
         user1.setEmail(user3.getEmail());
+        user1.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user1);
         return new UserResponse(user1);
 

@@ -1,6 +1,9 @@
 package com.pm.ecommerce.account_service.services;
 
 import com.pm.ecommerce.account_service.models.*;
+import com.pm.ecommerce.account_service.notifications.events.VendorApprovedEvent;
+import com.pm.ecommerce.account_service.notifications.events.VendorDisapprovedEvent;
+import com.pm.ecommerce.account_service.notifications.events.VendorRegisteredEvent;
 import com.pm.ecommerce.account_service.repositories.AddressRepository;
 import com.pm.ecommerce.account_service.repositories.TransactionRepository;
 import com.pm.ecommerce.account_service.repositories.VendorRepository;
@@ -10,11 +13,13 @@ import com.pm.ecommerce.entities.Transaction;
 import com.pm.ecommerce.entities.Vendor;
 import com.pm.ecommerce.enums.VendorStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +39,9 @@ public class VendorService {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     //Register a Vendor
     public VendorResponse createVendor(VendorRequest vendor) throws Exception {
@@ -104,6 +112,7 @@ public class VendorService {
         Address address = addressRepository.save(vendor2.getAddress());
 
         vendor2.setAddress(address);
+        vendor2.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         vendorRepository.save(vendor2);
 
         return new VendorResponse(vendor2);
@@ -129,7 +138,7 @@ public class VendorService {
 
     //get Vendor by id
     public Vendor getById(int id) {
-        return vendorRepository.findById(id).get();
+        return vendorRepository.findById(id).orElse(null);
     }
 
     public VendorResponse getVendorById(int id) {
@@ -199,6 +208,7 @@ public class VendorService {
         vendor1.setName(vendor2.getName());
         vendor1.setBusinessName(vendor2.getBusinessName());
         vendor1.setEmail(vendor2.getEmail());
+        vendor1.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
 
         vendorRepository.save(vendor1);
 
@@ -224,8 +234,15 @@ public class VendorService {
         if (vendor.getStatus() != VendorStatus.PAYMENT_DONE) {
             throw new Exception("Please provide the minimum payment for approval");
         }
+
         vendor.setStatus(VendorStatus.APPROVED);
+
         vendorRepository.save(vendor);
+
+
+        // notify the vendor
+        publisher.publishEvent(new VendorApprovedEvent(this, vendor));
+
         return new VendorResponse(vendor);
     }
 
@@ -241,10 +258,14 @@ public class VendorService {
         }
 
         vendor.setStatus(VendorStatus.UNAPPROVED);
+
         vendorRepository.save(vendor);
+
+        // notify the vendor
+        publisher.publishEvent(new VendorDisapprovedEvent(this, vendor));
+
         return new VendorResponse(vendor);
     }
-
 
     public VendorResponse sendForApproval(int id, int paymentId) throws Exception {
         Vendor vendor = getById(id);
@@ -258,6 +279,10 @@ public class VendorService {
         vendor.setPayment(transaction);
         vendor.setStatus(VendorStatus.PAYMENT_DONE);
         vendorRepository.save(vendor);
+
+        // notify the admin
+        publisher.publishEvent(new VendorRegisteredEvent(this, vendor));
+
         return new VendorResponse(vendor);
     }
 
