@@ -1,10 +1,10 @@
 package com.pm.ecommerce.account_service.utils;
 
 import com.pm.ecommerce.entities.Account;
-import com.pm.ecommerce.entities.Employee;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -15,15 +15,17 @@ import java.util.function.Function;
 
 @Component
 public class JwtTokenUtil implements Serializable {
-
     public static final long serialVersionUID = -2550185165626007488L;
 
-    private String SECRET_KEY = "sibtain";
+    @Value("${jwt.secret:sibtain}")
+    private String SECRET_KEY;
 
 
     public String generateToken(Account account, String type) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id",account.getId());
+        claims.put("id", account.getId());
+        claims.put("email", account.getEmail());
+        claims.put("name", account.getName());
         claims.put("type", type);
         return createToken(claims, account.getEmail());
     }
@@ -43,7 +45,6 @@ public class JwtTokenUtil implements Serializable {
     public Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
-
 
 
 }
