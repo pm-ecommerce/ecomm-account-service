@@ -59,12 +59,17 @@ public class EmployeeService {
         if (employee1 != null) {
             throw new Exception("Email is already registered");
         }
-        Role role = roleService.getById(employee.getRole().getId());
-        if (role == null) {
-            throw new Exception("Role not found");
-        }
+
         Employee employee2 = employee.toEmployee();
-        employee2.setRole(role);
+
+        if (employee.getRole() != null) {
+            Role role = roleService.getById(employee.getRole().getId());
+            if (role == null) {
+                throw new Exception("Role not found");
+            }
+            employee2.setRole(role);
+        }
+
         employee2.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         employeeRepository.save(employee2);
 
@@ -115,23 +120,25 @@ public class EmployeeService {
     }
 
     public LoginResponse login(LoginRequest request) throws Exception {
-
-        Employee employee1 = getEmployeeByEmail(request.getEmail());
-        // System.out.println(employee1.getPassword());
-        if (employee1 == null) {
-            throw new Exception("Data expected with this request");
-        }
-
-        if (!employee1.getPassword().equals(request.getPassword())) {
-            throw new Exception("Password did not match");
-        }
-
-        if (employee1.getEmail() == null || employee1.getEmail().length() == 0) {
+        if (request.getEmail() == null || request.getEmail().length() == 0) {
             throw new Exception("Email field is empty");
         }
 
-        if (!validateEmail(employee1.getEmail())) {
+        if (request.getPassword() == null || request.getPassword().length() == 0) {
+            throw new Exception("Password is empty");
+        }
+
+        if (!validateEmail(request.getEmail())) {
             throw new Exception("Email is invalid. Please provide a valid email");
+        }
+
+        Employee employee1 = getEmployeeByEmail(request.getEmail());
+        if (employee1 == null) {
+            throw new Exception("Employee not found");
+        }
+
+        if (!employee1.verify(request.getPassword())) {
+            throw new Exception("Password did not match");
         }
 
         final String token = jwtTokenUtil.generateToken(employee1, "employee");

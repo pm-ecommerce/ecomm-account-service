@@ -3,7 +3,6 @@ package com.pm.ecommerce.account_service.services;
 import com.pm.ecommerce.account_service.models.*;
 import com.pm.ecommerce.account_service.repositories.UserRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
-import com.pm.ecommerce.entities.Employee;
 import com.pm.ecommerce.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -88,7 +87,14 @@ public class UserService {
 
         User user1 = getByEmail(user.getEmail());
         if (user1 != null) {
-            throw new Exception("User with this email already exists!");
+            if (user1.getPassword() != null && user1.getPassword().length() > 0) {
+                throw new Exception("An account associated with this email already exists. Please login to your account.");
+            }
+
+            user1.setName(user.getName());
+            userRepository.save(user1);
+
+            return new UserResponse(user1);
         }
 
         User user2 = user.toUser();
@@ -149,20 +155,28 @@ public class UserService {
     }
 
     public LoginResponse login(LoginRequest request) throws Exception {
+        if (request.getEmail() == null || request.getEmail().length() == 0) {
+            throw new Exception("Email is empty");
+        }
+
+        if (request.getPassword() == null || request.getPassword().length() == 0) {
+            throw new Exception("Password is empty");
+        }
+
+        if (!validateEmail(request.getEmail())) {
+            throw new Exception("Email is invalid. Please provide a valid email");
+        }
+
         User user = getByEmail(request.getEmail());
         if (user == null) {
             throw new Exception("User not found");
-        }
-
-        if (user.getEmail() == null || user.getEmail().length() == 0) {
-            throw new Exception("Email is empty");
         }
 
         if (!validateEmail(user.getEmail())) {
             throw new Exception("Email is invalid. Please provide a valid email");
         }
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!user.verify(request.getPassword())) {
             throw new Exception("Password did not match");
         }
 
@@ -174,7 +188,6 @@ public class UserService {
         loginResponse.setName(user.getName());
 
         return loginResponse;
-
     }
 
     public PagedResponse<UserResponse> getAllUsers(int itemsPerPage, int currentPage) {

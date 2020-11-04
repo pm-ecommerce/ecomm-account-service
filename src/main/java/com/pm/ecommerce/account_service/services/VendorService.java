@@ -9,7 +9,6 @@ import com.pm.ecommerce.account_service.repositories.TransactionRepository;
 import com.pm.ecommerce.account_service.repositories.VendorRepository;
 import com.pm.ecommerce.account_service.utils.JwtTokenUtil;
 import com.pm.ecommerce.entities.Address;
-import com.pm.ecommerce.entities.Employee;
 import com.pm.ecommerce.entities.Transaction;
 import com.pm.ecommerce.entities.Vendor;
 import com.pm.ecommerce.enums.VendorStatus;
@@ -253,7 +252,7 @@ public class VendorService {
             throw new Exception("Vendor not found");
         }
 
-        if (vendor.getStatus() != VendorStatus.PAYMENT_DONE) {
+        if (vendor.getStatus() != VendorStatus.PAYMENT_DONE && vendor.getStatus() != VendorStatus.APPROVED) {
             throw new Exception("Please provide the minimum payment for approval");
         }
 
@@ -287,26 +286,29 @@ public class VendorService {
     }
 
     public LoginResponse login(LoginRequest request) throws Exception {
+        if (request.getEmail() == null || request.getEmail().length() == 0) {
+            throw new Exception("Please provide your business email");
+        }
+
+        if (request.getPassword() == null || request.getPassword().length() == 0) {
+            throw new Exception("Password is empty");
+        }
+
+        if (!validateEmail(request.getEmail())) {
+            throw new Exception("Email is invalid. Please provide a valid email");
+        }
 
         Vendor vendor1 = getByEmail(request.getEmail());
         if (vendor1 == null) {
             throw new Exception("Vendor not found!");
         }
 
-        if (!vendor1.getPassword().equals(request.getPassword())) {
+        if (!vendor1.verify(request.getPassword())) {
             throw new Exception("Password did not match");
         }
 
         if (vendor1.getStatus() != VendorStatus.APPROVED) {
             throw new Exception("Your account has not been approved yet");
-        }
-
-        if (vendor1.getEmail() == null || vendor1.getEmail().length() == 0) {
-            throw new Exception("Please provide your business email");
-        }
-
-        if (!validateEmail(vendor1.getEmail())) {
-            throw new Exception("Email is invalid. Please provide a valid email");
         }
 
         final String token = jwtTokenUtil.generateToken(vendor1, "vendor");
@@ -317,7 +319,6 @@ public class VendorService {
         loginResponse.setName(vendor1.getBusinessName());
 
         return loginResponse;
-
     }
 
     public VendorResponse updatePassword(VendorRequest request, int id) throws Exception {
